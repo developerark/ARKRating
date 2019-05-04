@@ -19,6 +19,7 @@ public class ARKRatingControl: UIControl{
         set{
             self._ratingPercent = newValue / CGFloat(self.maxRating)
             self.ratingLayer.strokeEnd = self._ratingPercent
+            
         }
         
         get{
@@ -154,6 +155,7 @@ public class ARKRatingControl: UIControl{
         CATransaction.commit()
         
         gesture.setTranslation(.zero, in: gesture.view)
+        self.sendActions(for: .valueChanged)
     }
     
     @objc func handleTapGesture(gesture: UITapGestureRecognizer){
@@ -164,5 +166,6 @@ public class ARKRatingControl: UIControl{
                 self.currentRating = CGFloat(index + 1)
             }
         }
+        self.sendActions(for: .valueChanged)
     }
 }

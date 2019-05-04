@@ -15,6 +15,9 @@ class ViewController: UIViewController {
         let ratingControl = ARKRatingControl()
         ratingControl.translatesAutoresizingMaskIntoConstraints = false
         ratingControl.maxRating = 5
+        ratingControl.currentRating = 1.5
+        ratingControl.addTarget(self, action: #selector(ratingControlValueChanged), for: .valueChanged)
+        ratingControl.isUserInteractionEnabled = false
         return ratingControl
     }()
     
@@ -29,5 +32,8 @@ class ViewController: UIViewController {
     }
 
 
+    @objc func ratingControlValueChanged(){
+        print(self.ratingControl.currentRating)
+    }
 }
 
