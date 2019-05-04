@@ -17,7 +17,6 @@ class ViewController: UIViewController {
         ratingControl.maxRating = 5
         ratingControl.currentRating = 1.5
         ratingControl.addTarget(self, action: #selector(ratingControlValueChanged), for: .valueChanged)
-        ratingControl.isUserInteractionEnabled = false
         return ratingControl
     }()
     
