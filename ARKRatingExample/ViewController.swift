@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     let ratingControl: ARKRatingControl = {
         let ratingControl = ARKRatingControl()
         ratingControl.translatesAutoresizingMaskIntoConstraints = false
+        ratingControl.maxRating = 5
         return ratingControl
     }()
     

@@ -9,35 +9,50 @@
 import UIKit
 
 public class ARKRatingControl: UIControl{
-    let backgroundLayer = CAShapeLayer()
-    let ratingLayer = CAShapeLayer()
-    let foregroundLayer = CAShapeLayer()
+    private let backgroundLayer = CAShapeLayer()
+    private let ratingLayer = CAShapeLayer()
+    private let foregroundLayer = CAShapeLayer()
+    private var positions = [CGRect]()
     
-    public var rating: CGFloat = 0.5
+    private var _ratingPercent: CGFloat = 0.5
+    public var currentRating: CGFloat {
+        set{
+            self._ratingPercent = newValue / CGFloat(self.maxRating)
+            self.ratingLayer.strokeEnd = self._ratingPercent
+        }
+        
+        get{
+            return self._ratingPercent * CGFloat(self.maxRating)
+        }
+    }
     public var maxRating: Int = 5
     public var ratingBorderColor: UIColor = .darkGray
     private var ratingBorderWidth: CGFloat = 0
-
     public var ratingColor: UIColor = .orange
-    
     public var ratingInnerColor: UIColor = .lightGray
     
     public override func layoutSubviews() {
         super.layoutSubviews()
         self.setup()
+        
+        // Setup gesture recognizers
+        let panGestureRecongnizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(gesture:)))
+        self.addGestureRecognizer(panGestureRecongnizer)
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(gesture:)))
+        self.addGestureRecognizer(tapGestureRecognizer)
     }
     
     private func setup(){
         
         // Calculations
-        var positions = [CGRect]()
         let sectionWidth = self.bounds.width / CGFloat(self.maxRating)
         let width = self.bounds.height - self.ratingBorderWidth
         let height = width
         for i in 0...self.maxRating - 1{
             let center = CGPoint(x: CGFloat(i) * sectionWidth + sectionWidth / 2, y: self.bounds.height / 2)
             let position = CGRect(x: center.x - width / 2, y: center.y - height / 2, width: width, height: height)
-            positions.append(position)
+            self.positions.append(position)
         }
         
         // Setup maskPath
@@ -72,7 +87,7 @@ public class ARKRatingControl: UIControl{
         self.ratingLayer.path = ratingLayerPath.cgPath
         self.ratingLayer.strokeColor = self.ratingColor.cgColor
         self.ratingLayer.lineWidth = self.bounds.height
-        self.ratingLayer.strokeEnd = self.rating
+        self.ratingLayer.strokeEnd = self._ratingPercent
         self.layer.addSublayer(self.ratingLayer)
         
         let ratingMaskLayer = CAShapeLayer()
@@ -125,5 +140,29 @@ public class ARKRatingControl: UIControl{
         path.addLine(to: getTranslation(rect: rect, point: p1))
         
         return path
+    }
+    
+    @objc func handlePanGesture(gesture: UIPanGestureRecognizer){
+        let translation = gesture.translation(in: gesture.view)
+        let percent = translation.x / self.bounds.width
+        self._ratingPercent = max(0, min(ratingLayer.strokeEnd + percent, 1))
+        
+        // Disable implecit animation
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        self.ratingLayer.strokeEnd = self._ratingPercent
+        CATransaction.commit()
+        
+        gesture.setTranslation(.zero, in: gesture.view)
+    }
+    
+    @objc func handleTapGesture(gesture: UITapGestureRecognizer){
+        let location = gesture.location(in: gesture.view)
+        
+        for (index, position) in self.positions.enumerated(){
+            if position.contains(location){
+                self.currentRating = CGFloat(index + 1)
+            }
+        }
     }
 }
