@@ -8,6 +8,7 @@
 
 import UIKit
 
+@IBDesignable
 public class ARKRatingControl: UIControl{
     private let backgroundLayer = CAShapeLayer()
     private let ratingLayer = CAShapeLayer()
@@ -15,6 +16,8 @@ public class ARKRatingControl: UIControl{
     private var positions = [CGRect]()
     
     private var _ratingPercent: CGFloat = 0.5
+    
+    @IBInspectable
     public var currentRating: CGFloat {
         set{
             self._ratingPercent = newValue / CGFloat(self.maxRating)
@@ -26,10 +29,16 @@ public class ARKRatingControl: UIControl{
             return self._ratingPercent * CGFloat(self.maxRating)
         }
     }
+    
+    @IBInspectable
     public var maxRating: Int = 5
+    @IBInspectable
     public var ratingBorderColor: UIColor = .darkGray
-    private var ratingBorderWidth: CGFloat = 0
+    @IBInspectable
+    public var ratingBorderWidth: CGFloat = 0
+    @IBInspectable
     public var ratingColor: UIColor = .orange
+    @IBInspectable
     public var ratingInnerColor: UIColor = .lightGray
     
     public override func layoutSubviews() {
@@ -143,7 +152,7 @@ public class ARKRatingControl: UIControl{
         return path
     }
     
-    @objc func handlePanGesture(gesture: UIPanGestureRecognizer){
+    @objc private func handlePanGesture(gesture: UIPanGestureRecognizer){
         let translation = gesture.translation(in: gesture.view)
         let percent = translation.x / self.bounds.width
         self._ratingPercent = max(0, min(ratingLayer.strokeEnd + percent, 1))
@@ -158,7 +167,7 @@ public class ARKRatingControl: UIControl{
         self.sendActions(for: .valueChanged)
     }
     
-    @objc func handleTapGesture(gesture: UITapGestureRecognizer){
+    @objc private func handleTapGesture(gesture: UITapGestureRecognizer){
         let location = gesture.location(in: gesture.view)
         
         for (index, position) in self.positions.enumerated(){
