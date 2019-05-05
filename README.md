@@ -26,7 +26,7 @@ This framework allows iOS developers to add a rating control to their app as sho
     `pod install`
 
 ### Setup manually
-Copy the Source folder of the projecr `ARKRating` to your project.
+Copy the Source folder of the project `ARKRating` to your project.
 
 ### Quick start guide
 This repo contains an example project named `ARKRatingExample` for illustration purposes. You can either use the storyboard to add this widget to your app or add it in code. 
